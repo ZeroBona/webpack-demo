@@ -5,13 +5,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  mode: 'development',
   entry: {
     page1: './src/static/scripts/page1/page1.js',
     page2: './src/static/scripts/page2/page2.js'
   },
   output: {
-    filename: 'js/[name].[hash:6].js',
+    filename: 'js/[name].[hash:8].js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
@@ -36,7 +35,7 @@ module.exports = {
             loader: 'url-loader',
             options: {
               limit: 5 * 1024,
-              name: 'static/[name]-[hash:6].[ext]',
+              name: 'static/[name]-[hash:8].[ext]',
               esModule: false,
             }
           },
@@ -45,6 +44,19 @@ module.exports = {
       {
         test: /\.html$/,
         use: ['html-withimg-loader'] // 处理html中引入图片
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,  // 排除node_modules在外，第三方代码已经处理了，不需要使用
+        loader: 'babel-loader',
+        options: { // 配置
+          "plugins": [["@babel/plugin-transform-runtime", {           
+            "corejs": 2,
+            "helpers": true,
+            "regenerator": true,
+            "useESModules": false
+         }]]
+        }
       },
     ]
   },
@@ -61,7 +73,7 @@ module.exports = {
       chunks: ['page2']
     }),
     new MiniCssExtractPlugin({
-      filename: "css/[name].[chunkhash:6].css",
+      filename: "css/[name].[chunkhash:8].css",
     })
   ],
   devServer: {
